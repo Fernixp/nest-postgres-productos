@@ -13,9 +13,8 @@ export class Product {
 
 
     @Column({
-        type: 'numeric',   
-        precision: 10,
-        scale: 2,
+        type: 'float',   
+        default: 0
     })
     price: number;
     
