@@ -8,7 +8,7 @@ async function main() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: false,
+      forbidNonWhitelisted: true,
     }),
   );
   await app.listen(process.env.PORT ?? 3000);
