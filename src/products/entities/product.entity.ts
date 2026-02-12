@@ -5,21 +5,51 @@ export class Product {
     @PrimaryGeneratedColumn('uuid')
     id: string = uuidv7(); //Usamos Version 7 de uuid
 
-    @Column('varchar',{
+    @Column({
+        type: 'varchar',
         unique: true,
     })
     title: string;
 
 
-    /* @Column('decimal', {
+    @Column({
+        type: 'numeric',   
         precision: 10,
         scale: 2,
     })
     price: number;
-
-    @Column('text')
+    
+    @Column({
+        type: 'text',
+        nullable: true
+    })
     description: string;
 
-    @Column('varchar')
-    image: string; */
+    @Column({
+        type: 'varchar',
+        unique: true,
+    })
+    slug: string;
+
+    @Column({
+        type: 'int',
+        default: 0
+    })
+    stock: number;
+
+    @Column({
+        type: 'text',
+        array: true,
+        default: []
+    })
+    sizes: string[];
+
+    @Column({
+        type: 'varchar',
+        default: 'unisex'
+    })
+    gender: string;
+
+    //tags
+    //images
 }
