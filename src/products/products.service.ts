@@ -36,6 +36,9 @@ export class ProductsService {
     return this.productRepository.findAndCount({
       take: limit,
       skip: offset,
+      order: {
+        id: 'DESC',
+      }
       //!TODO: Relaciones
     });
   }
