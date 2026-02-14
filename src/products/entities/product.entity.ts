@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { v7 as uuidv7 } from 'uuid';
 @Entity()
 export class Product {
@@ -52,6 +52,7 @@ export class Product {
   //images
 
   @BeforeInsert()
+  @BeforeUpdate()
   checkSlugInsert() {
     if (!this.slug) {
       this.slug = this.title;
