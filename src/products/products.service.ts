@@ -18,7 +18,7 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
-  ) {}
+  ) { }
 
   async create(createProductDto: CreateProductDto) {
     try {
@@ -32,7 +32,7 @@ export class ProductsService {
 
   /* Paginar */
   findAll(paginationDto: PaginationDto) {
-    const { limit =3, offset =0 } = paginationDto;
+    const { limit = 3, offset = 0 } = paginationDto;
     return this.productRepository.findAndCount({
       take: limit,
       skip: offset,
@@ -47,8 +47,22 @@ export class ProductsService {
     return product;
   }
 
-  update(id: string, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+
+    try {
+      /* Buscar un producto por el id y cargamos todas las propiedades que llega del usuario */
+      const product = await this.productRepository.preload({
+        id: id,
+        ...updateProductDto
+      })
+      if (!product) throw new NotFoundException(`Producto no encontrado con id ${id}`);
+
+      await this.productRepository.save(product)
+
+      return product;
+    } catch (error) {
+      this.handleDBException(error);
+    }
   }
 
   async remove(id: string) {
