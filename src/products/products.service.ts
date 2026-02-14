@@ -42,16 +42,33 @@ export class ProductsService {
   }
 
   /* Paginar */
-  findAll(paginationDto: PaginationDto) {
+  async findAll(paginationDto: PaginationDto) {
     const { limit = 3, offset = 0 } = paginationDto;
-    return this.productRepository.findAndCount({
+    const products = await this.productRepository.find({
       take: limit,
       skip: offset,
       order: {
         id: 'DESC',
+      },
+      /* No noecesario cuando configuramos eager:true en la entity */
+      relations: {
+        images: true,
+      },
+      /* Devolvemos solo url, mas no el id de la imagen */
+      select: {
+        images: {
+          id: true,
+          url: true,
+          /* Demas columnas como createdAt que no necesitamos */
+        }
       }
-      //!TODO: Relaciones
     });
+    /* Desestructuramos solo imagenes */
+    return products.map(({ images, ...rest }) => ({
+      ...rest,
+      images: images?.map(img => img.url)
+    })
+    );
   }
 
   async findOne(id: string) {
@@ -59,6 +76,15 @@ export class ProductsService {
     if (!product)
       throw new NotFoundException(`Producto no encontrado con id ${id}`);
     return product;
+  }
+
+  async findOnePlain(id: string) {
+
+    const { images = [], ...rest } = await this.findOne(id);
+    return {
+      ...rest,
+      images: images.map(img => img.url)
+    }
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {

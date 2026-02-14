@@ -6,7 +6,7 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('v1/products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
@@ -20,7 +20,7 @@ export class ProductsController {
 
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe({ version: '7' })) id: string) {
-    return this.productsService.findOne(id);
+    return this.productsService.findOnePlain(id);
   }
 
   @Patch(':id')

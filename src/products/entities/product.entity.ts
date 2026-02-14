@@ -60,7 +60,9 @@ export class Product {
     () => ProductImage,
     (productImage) => productImage.product,
     {
-      cascade: true
+      cascade: true,
+      /* Cada vez que usemos find* carga sus relaciones autmaticamente */
+      eager: true
     }
   )
   images?: ProductImage[];
