@@ -63,7 +63,7 @@ export class Product {
       cascade: true
     }
   )
-  images?: ProductImage
+  images?: ProductImage[];
 
   @BeforeInsert()
   @BeforeUpdate()

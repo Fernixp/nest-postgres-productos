@@ -9,8 +9,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { ProductImage, Product } from './entities';
 
 @Injectable()
 export class ProductsService {
@@ -18,13 +18,24 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(ProductImage)
+    private readonly productImageRepository: Repository<ProductImage>,
   ) { }
 
   async create(createProductDto: CreateProductDto) {
     try {
-      const producto = this.productRepository.create(createProductDto);
+      /* Aca separamos las imagenes de los detalles */
+      const { images = [], ...productDetails } = createProductDto;
+      const producto = this.productRepository.create({
+        /* Mandamos la data sin imagenes */
+        ...productDetails,
+        /* Hacemos insersion de las imagenes Tabla ProductImage */
+        images: images.map(image => this.productImageRepository.create({ url: image })),
+      });
       await this.productRepository.save(producto);
-      return producto;
+
+      /* Devolvemos solo lo necesario, es decir solo urls, que mando el fe */
+      return { ...producto, images: images };
     } catch (error) {
       this.handleDBException(error);
     }
@@ -56,7 +67,8 @@ export class ProductsService {
       /* Buscar un producto por el id y cargamos todas las propiedades que llega del usuario */
       const product = await this.productRepository.preload({
         id: id,
-        ...updateProductDto
+        ...updateProductDto,
+        images: [],
       })
       if (!product) throw new NotFoundException(`Producto no encontrado con id ${id}`);
 

@@ -41,4 +41,10 @@ export class CreateProductDto {
   @IsString({ each: true })
   @IsNotEmpty({ each: true })
   tags: string[];
+
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  images?: string[];
 }
