@@ -2,6 +2,7 @@ import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString
 export enum Gender {
   MEN = 'men',
   WOMEN = 'women',
+  KID = 'kid',
   UNISEX = 'unisex',
 }
 
