@@ -130,12 +130,19 @@ export class ProductsService {
 
   async remove(id: string) {
     const producto = await this.findOne(id);
-    await this.productRepository.remove(producto);
-    return producto;
+    try {
+      await this.productRepository.remove(producto);
+      return 'Producto eliminado exitosamente...! id:' + id;
+    } catch (error) {
+      this.handleDBException(error);
+    }
   }
 
   private handleDBException(error: any) {
     if (error.code === '23505') throw new BadRequestException(error.detail);
+
+    /* FK integridad referencial */
+    if (error.code === '23503') throw new BadRequestException(error.detail);
 
     this.logger.error(error);
     throw new InternalServerErrorException(
