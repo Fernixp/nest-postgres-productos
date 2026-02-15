@@ -1,7 +1,7 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { v7 as uuidv7 } from 'uuid';
 import { ProductImage } from './product-image.entity';
-@Entity()
+@Entity({ name: 'products' })
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string = uuidv7(); //Usamos Version 7 de uuid
