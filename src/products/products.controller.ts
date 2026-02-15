@@ -18,6 +18,12 @@ export class ProductsController {
     return this.productsService.findAll(paginationDto);
   }
 
+  @Get('delete-all')
+  deleteAllProducts() {
+    return this.productsService.deleteAllProducts()
+  }
+
+
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe({ version: '7' })) id: string) {
     return this.productsService.findOnePlain(id);
@@ -32,4 +38,6 @@ export class ProductsController {
   remove(@Param('id', new ParseUUIDPipe({ version: '7' })) id: string) {
     return this.productsService.remove(id);
   }
+
+
 }

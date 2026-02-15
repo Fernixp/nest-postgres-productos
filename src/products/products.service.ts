@@ -149,4 +149,16 @@ export class ProductsService {
       'Erro inesperado, revisa los logs del servidor..!!',
     );
   }
+
+  async deleteAllProducts() {
+    const query = this.productRepository.createQueryBuilder('product')
+    try {
+      await query.delete()
+        .where({})
+        .execute();
+      return 'Productos eliminados correctamente!'
+    } catch (error) {
+      this.handleDBException(error)
+    }
+  }
 }
