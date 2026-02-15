@@ -92,26 +92,38 @@ export class ProductsService {
 
   async update(id: string, updateProductDto: UpdateProductDto) {
 
+
+    const { images, ...toUpdate } = updateProductDto;
+
+    /* Buscar un producto por el id y cargamos todas las propiedades que llega del usuario */
+    const product = await this.productRepository.preload({
+      id: id,
+      ...toUpdate,
+    })
+    if (!product) throw new NotFoundException(`Producto no encontrado con id ${id}`);
+
+    //Create query runner (Transaccion)
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect(); //conectamos db    
+    await queryRunner.startTransaction();
+
     try {
+      if (images) {
+        /* Borramos todas las imagenes asociadas al producto */
+        await queryRunner.manager.delete(ProductImage,
+          { product: { id } }
+        )
+        /* guardamos las nuevas imagenes que nos llega */
+        product.images = images.map(image => this.productImageRepository.create({ url: image }))
+      }
 
-      const { images, ...toUpdate } = updateProductDto;
-
-      /* Buscar un producto por el id y cargamos todas las propiedades que llega del usuario */
-      const product = await this.productRepository.preload({
-        id: id,
-        ...toUpdate,
-      })
-      if (!product) throw new NotFoundException(`Producto no encontrado con id ${id}`);
-
-      //Create query runner
-      const queryRunner = this.dataSource.createQueryRunner();
-
-
-
-      await this.productRepository.save(product)
-
-      return product;
+      await queryRunner.manager.save(product);
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+      return this.findOnePlain(id);
     } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
       this.handleDBException(error);
     }
   }
