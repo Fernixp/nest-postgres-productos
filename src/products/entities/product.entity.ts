@@ -1,6 +1,7 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { v7 as uuidv7 } from 'uuid';
-@Entity()
+import { ProductImage } from './product-image.entity';
+@Entity({ name: 'products' })
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string = uuidv7(); //Usamos Version 7 de uuid
@@ -48,10 +49,26 @@ export class Product {
   })
   gender: string;
 
-  //tags
-  //images
+  @Column({
+    type: 'text',
+    array: true,
+    default: []
+  })
+  tags: string[]
+
+  @OneToMany(
+    () => ProductImage,
+    (productImage) => productImage.product,
+    {
+      cascade: true,
+      /* Cada vez que usemos find* carga sus relaciones autmaticamente */
+      eager: true
+    }
+  )
+  images?: ProductImage[];
 
   @BeforeInsert()
+  @BeforeUpdate()
   checkSlugInsert() {
     if (!this.slug) {
       this.slug = this.title;

@@ -6,7 +6,7 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('v1/products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
@@ -22,6 +22,10 @@ export class ProductsController {
   findOne(@Param('term') term: string) {
     return this.productsService.findOne(term);
   }
+  @Get('delete-all')
+  deleteAllProducts() {
+    return this.productsService.deleteAllProducts()
+  }
 
   @Patch(':id')
   update(@Param('id', new ParseUUIDPipe({ version: '7' })) id: string, @Body() updateProductDto: UpdateProductDto) {
@@ -32,4 +36,6 @@ export class ProductsController {
   remove(@Param('id', new ParseUUIDPipe({ version: '7' })) id: string) {
     return this.productsService.remove(id);
   }
+
+
 }
