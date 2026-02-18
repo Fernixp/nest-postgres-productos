@@ -11,6 +11,7 @@ import { User } from './entities/user.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 import * as bcrypt from 'bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -44,11 +45,25 @@ export class AuthService {
       return userWithoutPassword;
 
       /* TODO: Retornar JWT de acceso */
-      
+
 
     } catch (error) {
       this.handleDBException(error);
     }
+  }
+
+  async login(loginUserDto: LoginUserDto) {
+    const { email, password } = loginUserDto;
+    const user = await this.userRepository.findOne({
+      where: { email },
+      select: {email:true, password:true} //Solo traemos lo necesario
+    }); 
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      throw new BadRequestException('Credenciales Incorrectas');
+    }
+    const { password: _, ...userWithoutPassword } = user;
+    /* TODO: retornar JWT */
+    return user;
   }
 
   private handleDBException(error: any): never {

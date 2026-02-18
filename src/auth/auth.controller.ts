@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('v1/auth')
 export class AuthController {
@@ -15,5 +16,10 @@ export class AuthController {
   create(@Body() createUserDto: CreateUserDto) {
     console.log(createUserDto)
     return this.authService.create(createUserDto);
+  }
+
+  @Post('login')
+  login(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.login(loginUserDto);
   }
 }
