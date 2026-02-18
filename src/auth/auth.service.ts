@@ -1,9 +1,16 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +18,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) { }
+  ) {}
 
   async findAll(paginationDto: PaginationDto) {
     const { limit = 3, offset = 0 } = paginationDto;
@@ -20,16 +27,25 @@ export class AuthService {
       skip: offset,
       order: {
         id: 'DESC',
-      }
+      },
     });
     return users;
   }
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const user = this.userRepository.create(createUserDto)
+      const { password, ...userData } = createUserDto;
+      const user = this.userRepository.create({
+        ...userData,
+        password: bcrypt.hashSync(password, 10),
+      });
       await this.userRepository.save(user);
-      return user
+      const { password: _, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+
+      /* TODO: Retornar JWT de acceso */
+      
+
     } catch (error) {
       this.handleDBException(error);
     }

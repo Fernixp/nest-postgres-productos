@@ -1,4 +1,3 @@
-import { IsBoolean, IsNotEmpty } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { v7 as uuidv7 } from 'uuid';
 
