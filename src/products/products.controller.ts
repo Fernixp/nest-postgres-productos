@@ -18,15 +18,13 @@ export class ProductsController {
     return this.productsService.findAll(paginationDto);
   }
 
+  @Get(':term')
+  findOne(@Param('term') term: string) {
+    return this.productsService.findOne(term);
+  }
   @Get('delete-all')
   deleteAllProducts() {
     return this.productsService.deleteAllProducts()
-  }
-
-
-  @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe({ version: '7' })) id: string) {
-    return this.productsService.findOnePlain(id);
   }
 
   @Patch(':id')
