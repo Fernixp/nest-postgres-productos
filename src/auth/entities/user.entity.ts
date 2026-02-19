@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { v7 as uuidv7 } from 'uuid';
 
 @Entity({ name: 'users' })
@@ -8,7 +8,7 @@ export class User {
     id: string = uuidv7(); //Usamos Version 7 de uuid
 
     @Column({
-        type: 'varchar',
+        type: 'citext',
         unique: true,
     })
     email: string;

@@ -12,6 +12,8 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async findAll(paginationDto: PaginationDto) {
@@ -42,10 +45,9 @@ export class AuthService {
       });
       await this.userRepository.save(user);
       const { password: _, ...userWithoutPassword } = user;
-      return userWithoutPassword;
 
-      /* TODO: Retornar JWT de acceso */
-
+      const token = this.getJwtToken({ email: user.email, fullName: user.fullName, id: user.id });
+      return { ...userWithoutPassword, token };
 
     } catch (error) {
       this.handleDBException(error);
@@ -62,10 +64,14 @@ export class AuthService {
       throw new BadRequestException('Credenciales Incorrectas');
     }
     const { password: _, ...userWithoutPassword } = user;
-    /* TODO: retornar JWT */
-    return user;
+    const token = this.getJwtToken({ email: user.email, fullName: user.fullName, id: user.id });
+    return { ...userWithoutPassword, token };
   }
 
+  private getJwtToken(payload: JwtPayload){
+    const token = this.jwtService.sign(payload);
+    return token;
+  }
   private handleDBException(error: any): never {
     if (error.code === '23505') throw new BadRequestException(error.detail);
 
