@@ -22,7 +22,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       useFactory: (configService: ConfigService) => {
         const secret = configService.get('JWT_SECRET');
         const expiresIn = configService.get('JWT_EXPIRES_IN') || '2h';
-        console.log('ExpireS: ', expiresIn)
         return {
           secret: secret,
           signOptions: {

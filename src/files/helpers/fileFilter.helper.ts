@@ -11,10 +11,6 @@ export const fileFilter = (req: Request, file: Express.Multer.File, callback: Fu
     const validExtensions = ['jpg', 'png', 'jpeg']
 
     if (validExtensions.includes(fileExtension)) {
-
-        console.log('=======================================')
-        console.log({ file })
-        console.log('=======================================')
         return callback(null, true)
     }
     callback(null, false);
