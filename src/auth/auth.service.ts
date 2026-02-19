@@ -58,7 +58,7 @@ export class AuthService {
     const { email, password } = loginUserDto;
     const user = await this.userRepository.findOne({
       where: { email },
-      select: {email:true, password:true} //Solo traemos lo necesario
+      select: {id:true, email:true, password:true, fullName:true}
     }); 
     if (!user || !bcrypt.compareSync(password, user.password)) {
       throw new BadRequestException('Credenciales Incorrectas');
