@@ -1,12 +1,13 @@
 import { Product } from "src/products/entities";
-import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { v7 as uuidv7 } from 'uuid';
+import * as bcrypt from 'bcrypt';
 
 @Entity({ name: 'users' })
 export class User {
 
     @PrimaryGeneratedColumn('uuid')
-    id: string = uuidv7(); //Usamos Version 7 de uuid
+    id: string;
 
     @Column({
         type: 'citext',
@@ -41,4 +42,20 @@ export class User {
     /* Relacion one to many con products */
     @OneToMany(() => Product, (product) => product.user)
     products: Product[];
+
+    @BeforeInsert()
+    checkFieldsBeforeInsert() {
+        if (!this.id) this.id = uuidv7();
+        this.email = this.email.toLowerCase().trim();
+        this.password = bcrypt.hashSync(this.password, 10);
+    }
+
+    @BeforeUpdate()
+    checkFieldsBeforeUpdate() {
+        // Solo cifrar si la contraseña ha cambiado o no parece un hash
+        if (this.password && !this.password.startsWith('$2b$')) {
+            this.password = bcrypt.hashSync(this.password, 10);
+        }
+        this.email = this.email.toLowerCase().trim();
+    }
 }

@@ -22,7 +22,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async findAll(paginationDto: PaginationDto) {
     const { limit = 3, offset = 0 } = paginationDto;
@@ -38,28 +38,24 @@ export class AuthService {
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const { password, ...userData } = createUserDto;
-      const user = this.userRepository.create({
-        ...userData,
-        password: bcrypt.hashSync(password, 10),
-      });
+      const user = this.userRepository.create(createUserDto); // Ya no necesitas cifrar aquí manualmente
       await this.userRepository.save(user);
+
       const { password: _, ...userWithoutPassword } = user;
-
-      const token = this.getJwtToken({ email: user.email, fullName: user.fullName, id: user.id });
-      return { ...userWithoutPassword, token };
-
+      return {
+        ...userWithoutPassword,
+        token: this.getJwtToken({ id: user.id, email: user.email, fullName: user.fullName })
+      };
     } catch (error) {
       this.handleDBException(error);
     }
   }
-
   async login(loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
     const user = await this.userRepository.findOne({
       where: { email },
-      select: {id:true, email:true, password:true, fullName:true}
-    }); 
+      select: { id: true, email: true, password: true, fullName: true }
+    });
     if (!user || !bcrypt.compareSync(password, user.password)) {
       throw new BadRequestException('Credenciales Incorrectas');
     }
@@ -68,7 +64,7 @@ export class AuthService {
     return { ...userWithoutPassword, token };
   }
 
-  private getJwtToken(payload: JwtPayload){
+  private getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
     return token;
   }
