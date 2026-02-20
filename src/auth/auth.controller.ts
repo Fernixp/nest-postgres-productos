@@ -30,6 +30,15 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
+  @Get('/profile')
+  @Auth()
+  checkAuthStatus(
+    @GetUser() user: User
+  ){
+    return this.authService.checkAuthStatus(user);
+  }
+
+
   /* Implementar guard */
   @Get('private')
   @UseGuards( AuthGuard())

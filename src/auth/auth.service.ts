@@ -44,7 +44,7 @@ export class AuthService {
       const { password: _, ...userWithoutPassword } = user;
       return {
         ...userWithoutPassword,
-        token: this.getJwtToken({ id: user.id, email: user.email, fullName: user.fullName })
+        token: this.getJwtToken({ id: user.id })
       };
     } catch (error) {
       this.handleDBException(error);
@@ -60,8 +60,15 @@ export class AuthService {
       throw new BadRequestException('Credenciales Incorrectas');
     }
     const { password: _, ...userWithoutPassword } = user;
-    const token = this.getJwtToken({ email: user.email, fullName: user.fullName, id: user.id });
+    const token = this.getJwtToken({ id: user.id });
     return { ...userWithoutPassword, token };
+  }
+
+  async checkAuthStatus(user: User) {
+    return {
+      ...user,
+      token: this.getJwtToken({ id: user.id })
+    };
   }
 
   private getJwtToken(payload: JwtPayload) {
