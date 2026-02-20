@@ -1,6 +1,7 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { v7 as uuidv7 } from 'uuid';
 import { ProductImage } from './product-image.entity';
+import { User } from 'src/auth/entities/user.entity';
 @Entity({ name: 'products' })
 export class Product {
   @PrimaryGeneratedColumn('uuid')
@@ -67,6 +68,12 @@ export class Product {
   )
   images?: ProductImage[];
 
+  /* Relacion one to many con user */
+  @ManyToOne(() => User, (user) => user.products, {
+    eager: true
+  })
+  user: User;
+
   @BeforeInsert()
   @BeforeUpdate()
   checkSlugInsert() {
@@ -75,6 +82,9 @@ export class Product {
     }
     this.slug = this.generateSlug(this.slug);
   }
+
+  /* Registrar el id del usuario al crear un producto */
+
 
   private generateSlug(string: string) {
     return string.toLocaleLowerCase().replaceAll(' ', '-').replace("'", '');

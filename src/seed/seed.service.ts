@@ -20,11 +20,9 @@ export class SeedService {
     const products = initialData.products;
     const insertPromises: Promise<any>[] = [];
 
-    products.forEach(product => {
-
+    /* products.forEach(product => {
       insertPromises.push(this.productsService.create(product as unknown as CreateProductDto));
-
-    });
+    }); */
 
     await Promise.all(insertPromises);
     return true;

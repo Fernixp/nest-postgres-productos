@@ -1,4 +1,5 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Product } from "src/products/entities";
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { v7 as uuidv7 } from 'uuid';
 
 @Entity({ name: 'users' })
@@ -36,4 +37,8 @@ export class User {
         default: ['user'],
     })
     roles: string[];
+
+    /* Relacion one to many con products */
+    @OneToMany(() => Product, (product) => product.user)
+    products: Product[];
 }
