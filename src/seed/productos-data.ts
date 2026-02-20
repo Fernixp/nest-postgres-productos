@@ -18,7 +18,7 @@ interface SeedUser {
     email: string;
     password: string;
     fullName: string;
-    role: string[];
+    roles: string[];
 }
 
 interface SeedData {
@@ -33,25 +33,25 @@ export const initialData: SeedData = {
             email: 'fernandonina611@gmail.com',
             password: 'Aa12345678',
             fullName: 'Fernando nina',
-            role: ['admin', 'user', 'super-user']
+            roles: ['admin', 'user', 'super-user']
         },
         {
             email: 'superadmin@gmail.com',
             password: 'Aa12345678',
             fullName: 'Super User',
-            role: ['admin', 'user', 'super-user']
+            roles: ['admin', 'user', 'super-user']
         },
         {
             email: 'admin@gmail.com',
             password: 'Aa12345678',
             fullName: 'Admin',
-            role: ['admin', 'user']
+            roles: ['admin', 'user']
         },
         {
             email: 'user@gmail.com',
             password: 'Aa12345678',
             fullName: 'User',
-            role: ['user']
+            roles: ['user']
         }
     ],
     products: [
