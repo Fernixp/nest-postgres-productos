@@ -11,6 +11,7 @@ import { UserRoleGuard } from './guards/user-role.guard';
 import { RoleProtected } from './decorators/rol-protected.decorator';
 import { ValidRoles } from './interfaces/valid-roles';
 import { Auth } from './decorators/auth.decorator';
+import { GoogleAuthGuard } from './guards/google-auth/google-auth.guard';
 
 @Controller('v1/auth')
 export class AuthController {
@@ -36,6 +37,21 @@ export class AuthController {
     @GetUser() user: User
   ){
     return this.authService.checkAuthStatus(user);
+  }
+
+  @UseGuards(GoogleAuthGuard)
+  @Get('/google/login')
+  googleLogin(){
+    return {
+      message: 'Iniciando sesion con Google :)'
+    }
+  }
+  @UseGuards(GoogleAuthGuard)
+  @Get('/google/callback')
+  googleCallback(){
+    return {
+      message: 'Iniciando sesion con Google :)'
+    }
   }
 
 
